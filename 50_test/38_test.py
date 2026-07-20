@@ -1,17 +1,13 @@
 '''
-【程序38】  
-题目：写一个函数，求一个字符串的长度，在main函数中输入字符串，并输出其长度。  
+    【程序38】
+    题目：写一个函数，求一个字符串的长度，在main函数中输入字符串，并输出其长度。
 '''
-
-def func(str):
+def str_length(s):
     count = 0
-    str = str.strip()
-    for i in str:
-        if i !='\n':
-            count += 1 
+    for _ in s:
+        count += 1
     return count
 
-def main():
-    str = input("请输入字符串：")
-    print(func(str))
-main()
+if __name__ == '__main__':
+    s = input("请输入一个字符串: ")
+    print(f"字符串长度为: {str_length(s)}")

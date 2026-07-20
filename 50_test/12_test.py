@@ -1,32 +1,30 @@
 '''
-【程序12】  
-题目：企业发放的奖金根据利润提成。
-利润(I)低于或等于10万元时，奖金可提10%；
-利润高于10万元，低于20万元时，低于10万元的部分按10%提成，高于10万元的部分，可可提成7.5%；
-20万到40万之间时，高于20万元的部分，可提成5%；
-40万到60万之间时高于40万元的部分，可提成 3%；
-60万到100万之间时，高于60万元的部分，可提成1.5%，高于100万元时，超过100万元的部分按1%提成，从键盘输入当月利润I，求应发放奖金总数？  
-1.程序分析：请利用数轴来分界，定位。注意定义时需把奖金定义成长整型。 
+    【程序12】
+    题目：企业发放的奖金根据利润提成。利润(I)低于或等于10万元时，奖金可提10%；利润高于10万元，低于20万元时，低于10万元的部分按10%提成，高于10万元的部分，可可提成7.5%；20万到40万之间时，高于20万元的部分，可提成5%；40万到60万之间时高于40万元的部分，可提成 3%；60万到100万之间时，高于60万元的部分，可提成1.5%，高于100万元时，超过100万元的部分按1%提成，从键盘输入当月利润I，求应发放奖金总数？
+    1.程序分析：请利用数轴来分界，定位。注意定义时需把奖金定义成长整型。
 '''
-
-def func(profit: int) -> float:
-    # 数轴(区间上限, 税率)
-    periods = [
-        (100000, 0.1),
-        (200000, 0.075),
-        (400000, 0.05),
-        (600000, 0.03),
-        (1000000, 0.015),
-        (float("inf"), 0.01)  # 超过100万无上限
-    ]
+def calculate_bonus(profit):
     bonus = 0
-    previous_point = 0  # 上一档分界点，初始为0
-    for cap, rate in periods:
-        if profit <= previous_point:
-            break
-        # 当前区间奖金
-        amount = min(profit, cap) - previous_point
-        bonus += amount * rate
-        previous_point = cap
+    thresholds = [100000, 200000, 400000, 600000, 1000000]
+    rates = [0.1, 0.075, 0.05, 0.03, 0.015, 0.01]
+    
+    for i in range(len(thresholds)):
+        if profit <= thresholds[i]:
+            if i == 0:
+                bonus = profit * rates[i]
+            else:
+                bonus += (profit - thresholds[i-1]) * rates[i]
+            return bonus
+        else:
+            if i == 0:
+                bonus += thresholds[i] * rates[i]
+            else:
+                bonus += (thresholds[i] - thresholds[i-1]) * rates[i]
+    
+    bonus += (profit - thresholds[-1]) * rates[-1]
     return bonus
-print(f"应发放的奖金数:{func(1000000)}")
+
+if __name__ == '__main__':
+    profit = int(input("请输入当月利润（元）: "))
+    bonus = calculate_bonus(profit)
+    print(f"应发放奖金总数: {bonus} 元")

@@ -1,15 +1,18 @@
 '''
-【程序11】  
-题目：有1、2、3、4个数字，能组成多少个互不相同且无重复数字的三位数？都是多少？  
-1.程序分析：可填在百位、十位、个位的数字都是1、2、3、4。组成所有的排列后再去   掉不满足条件的排列。  
+    【程序11】
+    题目：有1、2、3、4个数字，能组成多少个互不相同且无重复数字的三位数？都是多少？
+    1.程序分析：可填在百位、十位、个位的数字都是1、2、3、4。组成所有的排列后再去   掉不满足条件的排列。
 '''
-def func()-> list:
-    lst = []
+def generate_numbers():
+    numbers = []
     for i in range(1, 5):
         for j in range(1, 5):
             for k in range(1, 5):
-                if i != j and i != k and j != k:
-                    lst.append(f"{i}{j}{k}")
-    return lst
-print(func())
-print(f"能组成{len(func())}个互不相同且无重复数字的三位数")
+                if i != j and j != k and i != k:
+                    numbers.append(i * 100 + j * 10 + k)
+    return numbers
+
+if __name__ == '__main__':
+    nums = generate_numbers()
+    print(f"能组成 {len(nums)} 个互不相同且无重复数字的三位数")
+    print("它们是:", nums)

@@ -1,18 +1,16 @@
 '''
-【程序40】  
-题目：字符串排序。  
+    【程序40】
+    题目：字符串排序。
 '''
+def string_sort(strings):
+    return sorted(strings)
 
-def func(s):
-    s_list = list(s)
-    for i in range(len(s_list)):
-        for j in range(i+1, len(s_list)):
-            if s_list[i] > s_list[j]:
-                s_list[i], s_list[j] = s_list[j], s_list[i]
-    print(''.join(s_list))
-
-def main():
-    s = input("请输入字符串：")
-    func(s)
-
-main()
+if __name__ == '__main__':
+    n = int(input("请输入字符串个数: "))
+    strings = []
+    for i in range(n):
+        s = input(f"请输入第{i+1}个字符串: ")
+        strings.append(s)
+    print("排序前:", strings)
+    sorted_strings = string_sort(strings)
+    print("排序后:", sorted_strings)
