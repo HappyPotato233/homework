@@ -1,25 +1,24 @@
 '''
-    【程序43】
-    题目：求0—7所能组成的奇数个数。
+    【程序43】  
+    题目：求0—7所能组成的奇数个数。 
 '''
-def count_odd_numbers():
-    count = 0
-    digits = [0, 1, 2, 3, 4, 5, 6, 7]
-    
-    for length in range(1, 8):
-        if length == 1:
-            for d in digits:
-                if d % 2 == 1:
-                    count += 1
-        else:
-            first_count = 7
-            last_count = 4
-            middle = 1
-            for i in range(length - 2):
-                middle *= 8
-            count += first_count * middle * last_count
-    
-    return count
+def func(nums, number, res):
+    # number存储已经拼接的数字列表
+    if number:
+        num = int(''.join(map(str,number)))
+        if num % 2 == 1:
+            res.append(num)
+    if len(number) == 8:
+        return
+    for num in nums:
+        if num == 0 and len(number) == 0:
+            continue
+        if num in number:
+            continue
+        func(nums, number + [num], res)
 
 if __name__ == '__main__':
-    print(f"0—7所能组成的奇数个数: {count_odd_numbers()}")
+    digits = [0,1,2,3,4,5,6,7]
+    res = []
+    func(digits, [], res)
+    print(f"总数为:{len(res)}")

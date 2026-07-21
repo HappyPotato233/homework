@@ -4,7 +4,7 @@
 '''
 def find_number():
     for x in range(10, 100):
-        if 8 * x < 100 and 9 * x >= 100:
+        if 8 * x < 100 and 1000 >= 9 * x >= 100:
             if 809 * x == 800 * x + 9 * x + 1:
                 return x, 809 * x
     return None

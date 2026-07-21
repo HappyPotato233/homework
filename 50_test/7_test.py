@@ -1,28 +1,27 @@
 '''
-    【程序7】
-    题目：输入一行字符，分别统计出其中英文字母、空格、数字和其它字符的个数。
-    1.程序分析：利用while语句,条件为输入的字符不为 '\n '.
+    【程序7】  
+    题目：输入一行字符，分别统计出其中英文字母、空格、数字和其它字符的个数。  
 '''
-def count_chars(s):
-    letters = 0
+def func(s):
+    letter = 0
     space = 0
     digit = 0
-    others = 0
-    for c in s:
-        if c.isalpha():
-            letters += 1
-        elif c.isspace():
+    other = 0
+    for char in s:
+        if char.isalpha():
+            letter += 1
+        elif char.isspace():
             space += 1
-        elif c.isdigit():
+        elif char.isdigit():
             digit += 1
         else:
-            others += 1
-    return letters, space, digit, others
+            other += 1
+    return letter, space, digit, other
 
-if __name__ == '__main__':
-    s = input("请输入一行字符: ")
-    letters, space, digit, others = count_chars(s)
-    print(f"英文字母: {letters} 个")
-    print(f"空格: {space} 个")
-    print(f"数字: {digit} 个")
-    print(f"其它字符: {others} 个")
+
+inputs = input("请输入一行字符:")
+letter, space, digit, other = func(inputs)
+print(f"字母个数: {letter}")
+print(f"空格个数: {space}")
+print(f"数字个数: {digit}")
+print(f"其它字符个数: {other}")
