@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - 智云科技</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='/static/index.html'">智云科技</div>
+        <ul class="nav-links">
+            <li><a href="/static/index.html">首页</a></li>
+            <li><a href="/static/admin.html">管理后台</a></li>
+        </ul>
+    </nav>
+
+    <!-- 登录界面 -->
+    <div id="login-section">
+        <div class="login-container">
+            <h2>管理员登录</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" required placeholder="请输入用户名">
+                </div>
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required placeholder="请输入密码">
+                </div>
+                <button type="submit" class="btn">登 录</button>
+                <div id="login-msg" class="error-msg"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 管理后台界面 -->
+    <div id="admin-section" style="display: none;">
+        <div class="admin-container">
+            <div class="admin-header">
+                <h2>内容管理后台</h2>
+                <div class="user-info">
+                    <span class="username" id="current-username"></span>
+                    <button class="btn btn-sm btn-danger" onclick="logout()">退出登录</button>
+                </div>
+            </div>
+
+            <!-- 发布新闻 -->
+            <div class="card">
+                <h3>发布新闻</h3>
+                <form id="add-news-form">
+                    <div class="form-group">
+                        <label for="news-title">标题</label>
+                        <input type="text" id="news-title" required placeholder="请输入新闻标题">
+                    </div>
+                    <div class="form-group">
+                        <label for="news-category">分类</label>
+                        <select id="news-category">
+                            <option value="公司动态">公司动态</option>
+                            <option value="公司荣誉">公司荣誉</option>
+                            <option value="产品发布">产品发布</option>
+                            <option value="校企合作">校企合作</option>
+                            <option value="财务报告">财务报告</option>
+                            <option value="资质认证">资质认证</option>
+                            <option value="行业活动">行业活动</option>
+                            <option value="融资动态">融资动态</option>
+                            <option value="生态合作">生态合作</option>
+                            <option value="开发者生态">开发者生态</option>
+                            <option value="战略布局">战略布局</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="news-content">内容</label>
+                        <textarea id="news-content" required placeholder="请输入新闻内容"></textarea>
+                    </div>
+                    <button type="submit" class="btn">发布新闻</button>
+                    <div id="add-news-msg"></div>
+                </form>
+            </div>
+
+            <!-- 新闻列表 -->
+            <div class="card">
+                <h3>新闻管理</h3>
+                <div id="admin-news-list">
+                    <div class="loading">加载中...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 删除确认弹窗 -->
+    <div id="delete-modal" class="modal-overlay">
+        <div class="modal">
+            <h3>确认删除</h3>
+            <p id="delete-confirm-text">确定要删除这条新闻吗？</p>
+            <div class="modal-actions">
+                <button class="btn" onclick="closeDeleteModal()">取消</button>
+                <button class="btn btn-danger" onclick="confirmDelete()">确认删除</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let deleteNewsId = null;
+
+        function isLoggedIn() {
+            return sessionStorage.getItem('isLoggedIn') === 'true';
+        }
+
+        function setLoggedIn(username) {
+            sessionStorage.setItem('isLoggedIn', 'true');
+            sessionStorage.setItem('username', username);
+        }
+
+        function setLoggedOut() {
+            sessionStorage.removeItem('isLoggedIn');
+            sessionStorage.removeItem('username');
+        }
+
+        function showLogin() {
+            document.getElementById('login-section').style.display = 'block';
+            document.getElementById('admin-section').style.display = 'none';
+        }
+
+        function showAdmin() {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('admin-section').style.display = 'block';
+            document.getElementById('current-username').textContent = sessionStorage.getItem('username') || '管理员';
+            loadAdminNews();
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const msgEl = document.getElementById('login-msg');
+            msgEl.textContent = '';
+            msgEl.className = 'error-msg';
+
+            try {
+                const res = await fetch('/admin/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+
+                if (data.code === 200) {
+                    setLoggedIn(username);
+                    showAdmin();
+                } else {
+                    msgEl.textContent = data.msg || '登录失败';
+                }
+            } catch (err) {
+                msgEl.textContent = '网络错误，请稍后重试';
+            }
+        });
+
+        async function logout() {
+            try {
+                await fetch('/admin/logout', {
+                    method: 'POST',
+                    credentials: 'same-origin'
+                });
+            } catch (err) {
+                console.error('Logout error:', err);
+            }
+            setLoggedOut();
+            showLogin();
+        }
+
+        document.getElementById('add-news-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const title = document.getElementById('news-title').value;
+            const category = document.getElementById('news-category').value;
+            const content = document.getElementById('news-content').value;
+            const msgEl = document.getElementById('add-news-msg');
+            msgEl.textContent = '';
+            msgEl.className = '';
+
+            try {
+                const res = await fetch('/admin/news', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ title, content, category })
+                });
+                const data = await res.json();
+
+                if (data.code === 200) {
+                    msgEl.textContent = '发布成功';
+                    msgEl.className = 'success-msg';
+                    document.getElementById('add-news-form').reset();
+                    loadAdminNews();
+                } else if (data.code === 403) {
+                    msgEl.textContent = '无权限，请重新登录';
+                    msgEl.className = 'error-msg';
+                    setLoggedOut();
+                    setTimeout(() => showLogin(), 1500);
+                } else {
+                    msgEl.textContent = data.msg || '发布失败';
+                    msgEl.className = 'error-msg';
+                }
+            } catch (err) {
+                msgEl.textContent = '网络错误，请稍后重试';
+                msgEl.className = 'error-msg';
+            }
+        });
+
+        async function loadAdminNews() {
+            const listEl = document.getElementById('admin-news-list');
+            listEl.innerHTML = '<div class="loading">加载中...</div>';
+
+            try {
+                const res = await fetch('/api/news');
+                const data = await res.json();
+
+                if (data.code === 200 && data.data && data.data.length > 0) {
+                    listEl.innerHTML = `
+                        <table class="news-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>标题</th>
+                                    <th>分类</th>
+                                    <th>发布时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${data.data.map(news => `
+                                    <tr>
+                                        <td>${news.id}</td>
+                                        <td>${news.title}</td>
+                                        <td><span class="category-tag">${news.category}</span></td>
+                                        <td>${news.publish_time}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-danger" onclick="openDeleteModal(${news.id}, '${news.title.replace(/'/g, "\\'")}')">删除</button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    `;
+                } else {
+                    listEl.innerHTML = '<div style="text-align: center; color: #999; padding: 40px;">暂无新闻</div>';
+                }
+            } catch (err) {
+                listEl.innerHTML = '<div style="text-align: center; color: #ff4757; padding: 40px;">加载失败，请稍后重试</div>';
+            }
+        }
+
+        function openDeleteModal(newsId, newsTitle) {
+            deleteNewsId = newsId;
+            document.getElementById('delete-confirm-text').textContent = `确定要删除新闻"${newsTitle}"吗？`;
+            document.getElementById('delete-modal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            deleteNewsId = null;
+            document.getElementById('delete-modal').classList.remove('active');
+        }
+
+        async function confirmDelete() {
+            if (!deleteNewsId) return;
+
+            try {
+                const res = await fetch(`/admin/news/${deleteNewsId}`, {
+                    method: 'DELETE',
+                    credentials: 'same-origin'
+                });
+                const data = await res.json();
+
+                if (data.code === 200) {
+                    closeDeleteModal();
+                    loadAdminNews();
+                } else if (data.code === 403) {
+                    closeDeleteModal();
+                    alert('无权限，请重新登录');
+                    setLoggedOut();
+                    showLogin();
+                } else {
+                    alert(data.msg || '删除失败');
+                }
+            } catch (err) {
+                alert('网络错误，请稍后重试');
+            }
+        }
+
+        document.getElementById('delete-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeDeleteModal();
+            }
+        });
+
+        if (isLoggedIn()) {
+            showAdmin();
+        } else {
+            showLogin();
+        }
+    </script>
+</body>
+</html>

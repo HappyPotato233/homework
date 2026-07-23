@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新闻详情 - 智云科技</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='/static/index.html'">智云科技</div>
+        <ul class="nav-links">
+            <li><a href="/static/index.html">首页</a></li>
+            <li><a href="/static/index.html#about">公司简介</a></li>
+            <li><a href="/static/index.html#news">新闻动态</a></li>
+            <li><a href="/static/admin.html">管理后台</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <a href="/static/index.html#news" class="back-btn">&larr; 返回新闻列表</a>
+        <div id="news-detail" class="news-detail">
+            <div class="loading">加载中...</div>
+        </div>
+    </div>
+
+    <script>
+        function getQueryParam(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        async function loadNewsDetail() {
+            const newsId = getQueryParam('id');
+            if (!newsId) {
+                document.getElementById('news-detail').innerHTML = '<div style="text-align: center; color: #ff4757; padding: 40px;">新闻ID不存在</div>';
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/news/${newsId}`);
+                const result = await res.json();
+                const detailEl = document.getElementById('news-detail');
+
+                if (result.code === 200 && result.data) {
+                    const news = result.data.data ? result.data.data[0] : (Array.isArray(result.data) ? result.data[0] : result.data);
+                    if (news) {
+                        detailEl.innerHTML = `
+                            <h1>${news.title}</h1>
+                            <div class="meta">
+                                <span class="category">${news.category}</span>
+                                <span>发布时间：${news.publish_time}</span>
+                            </div>
+                            <div class="content">${news.content}</div>
+                        `;
+                    } else {
+                        detailEl.innerHTML = '<div style="text-align: center; color: #999; padding: 40px;">新闻不存在</div>';
+                    }
+                } else if (result.code === 404) {
+                    detailEl.innerHTML = '<div style="text-align: center; color: #999; padding: 40px;">新闻不存在</div>';
+                } else {
+                    detailEl.innerHTML = `<div style="text-align: center; color: #ff4757; padding: 40px;">${result.msg || '加载失败'}</div>`;
+                }
+            } catch (err) {
+                document.getElementById('news-detail').innerHTML = '<div style="text-align: center; color: #ff4757; padding: 40px;">加载失败，请稍后重试</div>';
+            }
+        }
+
+        loadNewsDetail();
+    </script>
+</body>
+</html>

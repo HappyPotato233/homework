@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新闻动态 - 智云科技</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo" onclick="window.location.href='/static/index.html'">智云科技</div>
+        <ul class="nav-links">
+            <li><a href="/static/index.html">首页</a></li>
+            <li><a href="/static/index.html#about">公司简介</a></li>
+            <li><a href="/static/news-list.html">新闻动态</a></li>
+            <li><a href="/static/admin.html">管理后台</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <h2 class="section-title">新闻动态</h2>
+        <div id="all-news" class="news-grid">
+            <div class="loading">加载中...</div>
+        </div>
+    </div>
+
+    <script>
+        function renderNewsCards(newsList) {
+            return newsList.map(news => `
+                <div class="news-card" onclick="window.location.href='/static/news-detail.html?id=${news.id}'">
+                    <span class="category">${news.category}</span>
+                    <h3>${news.title}</h3>
+                    <p class="summary">${news.content}</p>
+                    <span class="date">${news.publish_time}</span>
+                </div>
+            `).join('');
+        }
+
+        async function loadNews() {
+            try {
+                const res = await fetch('/api/news');
+                const data = await res.json();
+                const allEl = document.getElementById('all-news');
+
+                if (data.code === 200 && data.data && data.data.length > 0) {
+                    allEl.innerHTML = renderNewsCards(data.data);
+                } else {
+                    allEl.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #999; padding: 40px;">暂无新闻</div>';
+                }
+            } catch (err) {
+                document.getElementById('all-news').innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #ff4757; padding: 40px;">加载失败，请稍后重试</div>';
+            }
+        }
+
+        loadNews();
+    </script>
+</body>
+</html>
