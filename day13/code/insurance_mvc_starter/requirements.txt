@@ -1,0 +1,8 @@
+flask==3.0.3
+sqlalchemy==2.0.30
+pydantic==2.7.1
+pydantic-settings==2.2.1
+python-jose==3.3.0
+bcrypt==4.1.2
+openpyxl==3.1.2
+pandas==2.2.2
