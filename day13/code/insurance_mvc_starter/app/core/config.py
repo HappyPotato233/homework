@@ -26,6 +26,12 @@ class Settings(BaseSettings):
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24 # 24小时过期
     JWT_ALGORITHM: str = "HS256" # 验证和签名JWT令牌的算法，默认使用HS256算法
     LOG_LEVEL: str = "INFO"
+    # LLM 配置（OpenAI 兼容协议）
+    LLM_API_KEY: str = "sk-0eee643c17e040fc8a5f352876f6e75f"           # 空字符串=未配置，邮件生成标记 failed
+    LLM_API_BASE: str = "https://api.deepseek.com"
+    LLM_MODEL: str = "deepseek-v4-pro"
+    # 模型文件存储路径
+    MODEL_DIR: str = str(BASE_DIR / "data" / "models")
 
 # 模块实例化：import本模块时立即创造一个全局单例
 settings = Settings()

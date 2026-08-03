@@ -6,3 +6,10 @@ python-jose==3.3.0
 bcrypt==4.1.2
 openpyxl==3.1.2
 pandas==2.2.2
+scikit-learn==1.9.0
+xgboost==3.3.0
+joblib==1.5.3
+matplotlib==3.11.1
+seaborn==0.13.2
+openai==2.52.0
+pytest==8.3.4

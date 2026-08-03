@@ -7,5 +7,9 @@
 from app.core.database import Base
 from app.models.user import User
 from app.models.customers import Customer
+from app.models.experiment import Experiment
+from app.models.email_record import EmailRecord
+from app.models.prompt_template import PromptTemplate
+from app.models.operation_log import OperationLog
 
-__all__ = ["Base", "User", "Customer"]
+__all__ = ["Base", "User", "Customer", "Experiment", "EmailRecord", "PromptTemplate", "OperationLog"]

@@ -1,0 +1,22 @@
+services:
+  web:
+    build: .
+    container_name: insurance-app
+    ports:
+      - "5000:5000"
+    volumes:
+      # 数据库持久化：容器内 /app/instance 映射到宿主机 ./instance
+      - ./instance:/app/instance
+      # 模型文件持久化：训练生成的 .joblib 不会随容器销毁
+      - ./data/models:/app/data/models
+    env_file:
+      - .env
+    environment:
+      - FLASK_ENV=production
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:5000/health', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s

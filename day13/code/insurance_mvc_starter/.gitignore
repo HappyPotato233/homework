@@ -1,0 +1,58 @@
+# ===== Python =====
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ===== 虚拟环境 =====
+venv/
+.venv/
+env/
+.env
+
+# ===== Flask / 实例目录 =====
+instance/
+*.sqlite
+*.db
+
+# ===== 项目运行时数据（不入库） =====
+data/models/*
+data/uploads/*
+data/exports/*
+!data/.gitkeep
+
+# ===== 日志 =====
+*.log
+logs/
+
+# ===== IDE / 编辑器 =====
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ===== 操作系统 =====
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ===== 测试 / 覆盖率 =====
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# ===== Docker =====
+# 保留 Dockerfile 和 docker-compose.yml，忽略运行时产物
+docker-compose.override.yml
+
+# ===== 临时文件 =====
+*.tmp
+*.bak
+_check_api.py

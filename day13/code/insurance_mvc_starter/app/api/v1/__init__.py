@@ -16,7 +16,13 @@ def register_blueprints(app: Flask):
     """
     from app.api.v1.auth import bp as auth_bp
     from app.api.v1.data import bp as data_bp
+    from app.api.v1.model import bp as model_bp
+    from app.api.v1.email import bp as email_bp
+    from app.api.v1.log import bp as log_bp
 
     app.register_blueprint(auth_bp, url_prefix="/api/v1/auth")
     app.register_blueprint(data_bp, url_prefix="/api/v1/data")
+    app.register_blueprint(model_bp, url_prefix="/api/v1/model")
+    app.register_blueprint(email_bp, url_prefix="/api/v1/email")
+    app.register_blueprint(log_bp, url_prefix="/api/v1/logs")
     

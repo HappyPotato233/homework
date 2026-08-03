@@ -38,17 +38,17 @@ class Customer(Base):
         """清空旧数据 + 批量导入，返回入库行数
 
         教学版覆盖策略：每次上传先 DELETE 全表再批量 INSERT。
-        逐字思路：
-        1. DELETE 全表（清空旧数据，API 文档规定的覆盖策略）
-        2. 给每行加上 uploaded_by = user_id
-        3. 逐行构造 Customer 对象 add 到会话
-        4. 一次 commit 提交整个事务（delete + insert 原子性，失败自动回滚）
+        使用 bulk_insert_mappings 分批 5000 条 commit，防 38 万行锁库（NFR-PERF-001）。
         """
         db.query(cls).delete()
+        db.commit()
         for row in rows:
             row["uploaded_by"] = user_id
-            db.add(cls(**row))
-        db.commit()
+        batch_size = 5000
+        for i in range(0, len(rows), batch_size):
+            batch = rows[i:i + batch_size]
+            db.bulk_insert_mappings(cls, batch)
+            db.commit()
         return len(rows)
 
     @classmethod

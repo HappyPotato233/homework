@@ -19,7 +19,6 @@ def _parse_body(model_cls):
     3. 校验不过抛 BizException(1001)
     """
     body = request.get_json(silent=True) or {}
-    print(body)
     try:
         return model_cls(**body)
     except ValidationError:

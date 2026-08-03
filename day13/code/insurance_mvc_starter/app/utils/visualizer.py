@@ -27,8 +27,10 @@ VALID_CHART_TYPES = {
     "premium_distribution",
 }
 
-# 全局样式
+# 全局样式（sns.set_theme 会重置 rcParams，必须在其之后配置中文字体）
 sns.set_theme(style="whitegrid", font_scale=1.1)
+plt.rcParams["font.sans-serif"] = ["SimHei", "Microsoft YaHei", "WenQuanYi Zen Hei", "DejaVu Sans"]  # Windows/Linux 兼容
+plt.rcParams["axes.unicode_minus"] = False    # 解决负号"-"显示方块问题
 
 
 def generate_chart(db: Session, chart_type: str) -> dict:
@@ -80,7 +82,7 @@ def _draw_response_distribution(responses: list) -> plt.Figure:
     labels = [f"未响应 (0)\n{counts['0']}", f"响应 (1)\n{counts['1']}"]
     colors = ["#5B9BD5", "#ED7D31"]
     ax.pie(counts.values(), labels=labels, colors=colors, autopct="%1.1f%%", startangle=90)
-    ax.set_title("客户响应分布 (Response Distribution)", fontsize=14, fontweight="bold")
+    ax.set_title("客户响应分布 (Response Distribution)", fontsize=14)
     return fig
 
 
@@ -104,7 +106,7 @@ def _draw_gender_response(genders: list, responses: list) -> plt.Figure:
     ax.set_xticks(x_pos)
     ax.set_xticklabels(x)
     ax.set_ylabel("人数")
-    ax.set_title("性别与响应关系 (Gender vs Response)", fontsize=14, fontweight="bold")
+    ax.set_title("性别与响应关系 (Gender vs Response)", fontsize=14)
     ax.legend()
     return fig
 
@@ -115,7 +117,7 @@ def _draw_age_distribution(ages: list) -> plt.Figure:
     ax.hist(ages, bins=30, color="#70AD47", edgecolor="white", alpha=0.8)
     ax.set_xlabel("年龄")
     ax.set_ylabel("人数")
-    ax.set_title("客户年龄分布 (Age Distribution)", fontsize=14, fontweight="bold")
+    ax.set_title("客户年龄分布 (Age Distribution)", fontsize=14)
     return fig
 
 
@@ -125,7 +127,7 @@ def _draw_premium_distribution(premiums: list) -> plt.Figure:
     ax.hist(premiums, bins=40, color="#FFC000", edgecolor="white", alpha=0.8)
     ax.set_xlabel("年保费 (Annual Premium)")
     ax.set_ylabel("人数")
-    ax.set_title("年保费分布 (Premium Distribution)", fontsize=14, fontweight="bold")
+    ax.set_title("年保费分布 (Premium Distribution)", fontsize=14)
     return fig
 
 

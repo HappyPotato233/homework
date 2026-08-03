@@ -1,0 +1,38 @@
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+
+# Docker 自身文件
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Git
+.git/
+.gitignore
+
+# IDE / 工具配置
+.vscode/
+.trae/
+.codegraph/
+.idea/
+
+# 环境变量（容器内通过 docker-compose env_file 注入）
+.env
+
+# 文档
+*.md
+
+# 测试
+tests/
+conftest.py
+pytest.ini
+
+# 数据库与模型文件（通过 volume 挂载持久化，不打进镜像）
+instance/
+data/models/*.joblib
+
+# 临时文件
+*.log
+*.tmp

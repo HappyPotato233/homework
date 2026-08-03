@@ -51,6 +51,21 @@ def _init_admin():
         db.close()
 
 
+def _init_prompt_template():
+    """启动时同步默认 Prompt 模板（幂等，代码升级后自动更新旧模板内容）"""
+    db = SessionLocal()
+    try:
+        from .models.prompt_template import PromptTemplate
+        existing = PromptTemplate.get_active(db)
+        PromptTemplate.seed_default(db)
+        if existing:
+            print("[INIT] Prompt 模板已同步")
+        else:
+            print("[INIT] 默认 Prompt 模板已创建")
+    finally:
+        db.close()
+
+
 def create_app() -> Flask:
     """应用工厂：返回一个装配好的 Flask 实例"""
     # ① 创建 Flask 实例
@@ -85,10 +100,19 @@ def create_app() -> Flask:
     with app.app_context():
         Base.metadata.create_all(bind=engine)
         _init_admin()
+        _init_prompt_template()
 
     # 健康检查：GET /health，部署时探针用
     @app.route("/health")
     def _health():
         return json({"status": "ok", "app": "insurance_mvc_starter"})
+
+    # SPA catch-all：所有非 API、非静态文件的路径返回 index.html，交给前端路由处理
+    # /api/v1/* 由蓝图优先匹配，/static/* 由 Flask 默认静态路由优先匹配，/health 优先匹配
+    @app.route("/", defaults={"path": ""})
+    @app.route("/<path:path>")
+    def _spa(path):
+        from app.utils.file_helper import read_static_file
+        return read_static_file("index.html")
 
     return app
