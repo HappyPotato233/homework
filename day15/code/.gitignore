@@ -1,0 +1,18 @@
+# ===== 白名单模式：默认忽略所有，只保留指定文件 =====
+*
+
+# 反向保留：要上传到 GitHub 的文件
+!card_generator.py
+!.gitignore
+!未命名绘图.drawio.png
+
+# ===== 安全防线：.env 含 API 密钥，绝不上传 =====
+# 已被上面的 * 忽略，这里防御性强调，防止误改后泄露
+.env
+.env.*
+*.env
+
+# ===== Python 产物 =====
+__pycache__/
+*.py[cod]
+*.pyo
