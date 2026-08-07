@@ -2,9 +2,9 @@
 *
 
 # 反向保留：要上传到 GitHub 的文件
-!card_generator.py
+!test3.py
 !.gitignore
-!未命名绘图.drawio.png
+未命名绘图.drawio.png
 
 # ===== 安全防线：.env 含 API 密钥，绝不上传 =====
 # 已被上面的 * 忽略，这里防御性强调，防止误改后泄露
