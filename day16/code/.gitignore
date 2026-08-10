@@ -1,0 +1,5 @@
+*
+!.gitignore
+!test1
+!test1/**
+test1/__pycache__/
