@@ -22,7 +22,7 @@ def build_vector_store(docs_dir="./code/docs", persist_directory="./code/chroma_
         return None
     # 加载本地已下载好的bge-large模型
     print("正在加载本地已下载好的bge-large模型")
-    model_name = "./code/BAAI/bge-large"
+    model_name = "./code/BAAI"
     embeddings = HuggingFaceEmbeddings(
         model_name=model_name,
         model_kwargs={"device":"cuda"}, 
@@ -31,10 +31,13 @@ def build_vector_store(docs_dir="./code/docs", persist_directory="./code/chroma_
 
     # 向量化并存储到Chroma
     print("正在向量化并存储到Chroma数据库")
-    vector_store = Chroma(
+    vector_store = Chroma.from_documents(
         documents=split_docs,
         embedding=embeddings,
         persist_directory=persist_directory
     )
     print("✅ 向量数据库构建完成")
     return vector_store
+
+if __name__ == "__main__":
+    build_vector_store()

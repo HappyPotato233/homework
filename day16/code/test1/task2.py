@@ -176,7 +176,7 @@ def test(query):
     return answer
 
 def main():
-    query = "华为2025年的销售收入和净利润是多少？" # - 销售收入：126,018 百万美元 / 880,941 百万人民币。净利润：9,732 百万美元 / 68,036 百万人民币
+    query = "华为创建于哪一年？\n" # 1987
     answer = test(query)
     if answer:
         print(answer)
